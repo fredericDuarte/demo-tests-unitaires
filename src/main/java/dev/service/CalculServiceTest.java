@@ -27,17 +27,15 @@ public class CalculServiceTest {
 
 		LOG.info("Etant donné, une instance de la classe CalculService"); 
 		
-		//CalculService calc = mock(CalculService.class);
+
 		CalculService calc = new CalculService();
 
 		LOG.info("Lorsque j'évalue l'addition de l'expression 1+3+4"); 
         int somme = calc.additionner("1+3*+4");
-		//when(calc.additionner("1+3+4")).thenReturn(8);
+
 		
 		
 		LOG.info("Alors j'obtiens le résultat 8");
-		//System.out.println(somme);
-		//assertEquals(8,  somme);
 		assertThat(somme).isEqualTo(8);
 
 

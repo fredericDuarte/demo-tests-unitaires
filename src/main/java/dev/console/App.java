@@ -21,19 +21,34 @@ public class App {
 	}
 
 	protected void afficherTitre() {
-		
+
 		LOG.info("**** Application Calculatrice ****");
 	}
 
 	public void demarrer() {
 		afficherTitre();
+
+		String saisie = null;
+		while (!saisie.equals("fin")) {
+			LOG.info("Veuillez saisir une expression :");
+			saisie = this.scanner.nextLine();
+			evaluer(saisie);
+
+		}
+		LOG.info("Au revoir");
+
 	}
 
 	protected void evaluer(String expression) {
-		
-		//LOG.info(expression + " " + resultat);
-		
-		
+
+		try {
+			int add = calculatrice.additionner(expression);
+			System.out.println("****  " + add);
+			LOG.debug(expression + "=" + add);
+		} catch (CalculException e) {
+			LOG.debug("L'expression " + expression + " est invalide.");
+		}
+
 	}
 
 }

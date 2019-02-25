@@ -11,9 +11,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
+import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.exception.CalculException;
 import dev.service.CalculService;
 import dev.service.CalculServiceTest;
 
@@ -24,13 +27,14 @@ public class AppTest {
 	@Rule
 	public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
+	@Rule
+	public TextFromStandardInputStream systemInMock = emptyStandardInputStream();
+
 	private App app;
 	private CalculService calculService;
 
 	@Before
 	public void setUp() throws Exception {
-//		this.calculService = new CalculService();
-//		this.app = new App(new Scanner(System.in), calculService);
 
 		Scanner sc = new Scanner(System.in);
 		this.calculService = mock(CalculService.class);
@@ -55,6 +59,28 @@ public class AppTest {
 		verify(calculService).additionner(expression);
 		LOG.info("Alors dans la console, s'affiche 1+34=35");
 		assertThat(systemOutRule.getLog()).contains("1+34=35");
+	}
+	
+	@Test
+	public void testInvalide() throws Exception {
+		LOG.info("Etant donné, un service CalculService qui retourne un message d'invalide à l'évaluation de l'expression erronée 1*A");
+		String expression = "1*A";
+		when(calculService.additionner(expression)).thenThrow(new CalculException());
+		LOG.info("Lorsque la méthode evaluer est invoquée");
+		this.app.evaluer(expression);
+		LOG.info("Alors le service est invoqué avec l'expression invalide {}", expression);
+		assertThat(systemOutRule.getLog()).contains("L'expression " + expression + " est invalide.");
+	}
+
+	@Test
+	public void testDemarrer() throws Exception {
+
+		this.app.demarrer();
+		systemInMock.provideLines("1+2");
+
+		LOG.info("Alors dans la console, s'affiche au revoir");
+		assertThat(systemOutRule.getLog()).contains("1+2=3");
+
 	}
 
 }
